@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Quant Desk — 資産分析レポート</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--navy:#0a1628;--navy-light:#132240;--navy-mid:#1a2d4a;--gold:#d4a843;--gold-light:#e8c875;--text:#e0e6f0;--text-dim:#8899b3;--green:#4ade80;--red:#f87171;--blue:#60a5fa}
+body{font-family:'Helvetica Neue',Arial,'Hiragino Kaku Gothic ProN',sans-serif;background:var(--navy);color:var(--text);min-height:100vh}
+.container{max-width:720px;margin:0 auto;padding:20px}
+header{text-align:center;padding:30px 0 20px;border-bottom:1px solid var(--navy-mid)}
+header h1{font-size:1.6em;letter-spacing:2px;color:var(--gold)}
+header h1 span{color:var(--text-dim);font-weight:300;font-size:.6em;display:block;margin-top:4px;letter-spacing:1px}
+.form-section{margin-top:30px}
+.form-group{margin-bottom:20px}
+.form-group label{display:block;margin-bottom:6px;font-size:.9em;color:var(--gold-light)}
+.form-group input,.form-group select{width:100%;padding:12px 14px;background:var(--navy-light);border:1px solid var(--navy-mid);border-radius:8px;color:var(--text);font-size:1em;transition:border .2s}
+.form-group input:focus,.form-group select:focus{outline:none;border-color:var(--gold)}
+.checkbox-group{display:flex;flex-wrap:wrap;gap:10px}
+.checkbox-group label{display:flex;align-items:center;gap:6px;background:var(--navy-light);padding:10px 16px;border-radius:8px;cursor:pointer;border:1px solid var(--navy-mid);transition:all .2s;font-size:.9em}
+.checkbox-group label:has(input:checked){border-color:var(--gold);background:var(--navy-mid)}
+.checkbox-group input[type=checkbox]{accent-color:var(--gold);width:16px;height:16px}
+.btn{width:100%;padding:14px;background:linear-gradient(135deg,var(--gold),#b8912e);color:var(--navy);font-size:1.1em;font-weight:700;border:none;border-radius:10px;cursor:pointer;transition:transform .15s,box-shadow .15s;letter-spacing:1px}
+.btn:hover{transform:translateY(-1px);box-shadow:0 4px 20px rgba(212,168,67,.3)}
+.btn:active{transform:translateY(0)}
+.btn-secondary{background:var(--navy-light);color:var(--gold);border:1px solid var(--gold);margin-top:20px}
+.report{margin-top:20px;animation:fadeIn .6s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.report-section{background:var(--navy-light);border-radius:12px;padding:24px;margin-bottom:20px;border:1px solid var(--navy-mid)}
+.report-section h3{color:var(--gold);font-size:1.1em;margin-bottom:16px;display:flex;align-items:center;gap:8px}
+.bar-container{margin-bottom:14px}
+.bar-label{display:flex;justify-content:space-between;font-size:.85em;margin-bottom:4px}
+.bar-label .name{color:var(--text-dim)}
+.bar-label .value{color:var(--gold-light);font-weight:600}
+.bar{height:28px;border-radius:6px;position:relative;overflow:hidden;background:var(--navy-mid)}
+.bar-fill{height:100%;border-radius:6px;transition:width 1s ease;display:flex;align-items:center;padding-left:10px;font-size:.75em;font-weight:600}
+.bar-fill.btc{background:linear-gradient(90deg,#f7931a,#e8a22e)}
+.bar-fill.gold{background:linear-gradient(90deg,var(--gold),var(--gold-light))}
+.bar-fill.sp{background:linear-gradient(90deg,var(--blue),#93c5fd)}
+.bar-fill.cash{background:linear-gradient(90deg,#6b7280,#9ca3af)}
+.bar-fill.loss{background:linear-gradient(90deg,var(--red),#fca5a5)}
+.summary-box{background:var(--navy);border:2px solid var(--gold);border-radius:10px;padding:20px;text-align:center;margin-top:16px}
+.summary-box .big-number{font-size:2em;font-weight:700;color:var(--gold)}
+.summary-box .label{color:var(--text-dim);font-size:.85em;margin-top:4px}
+.comparison-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:16px}
+.comp-card{background:var(--navy);border-radius:8px;padding:16px;text-align:center}
+.comp-card.positive{border:1px solid var(--green)}
+.comp-card.negative{border:1px solid var(--red)}
+.comp-card .amount{font-size:1.4em;font-weight:700;margin:6px 0}
+.comp-card.positive .amount{color:var(--green)}
+.comp-card.negative .amount{color:var(--red)}
+.comp-card .desc{font-size:.75em;color:var(--text-dim)}
+table{width:100%;border-collapse:collapse;margin-top:12px;font-size:.85em}
+th,td{padding:10px;text-align:center;border-bottom:1px solid var(--navy-mid)}
+th{color:var(--gold-light);font-weight:600;font-size:.8em;text-transform:uppercase}
+td{color:var(--text)}
+.tag-green{color:var(--green)}
+.tag-red{color:var(--red)}
+.disclaimer{text-align:center;font-size:.7em;color:var(--text-dim);margin:24px 0;line-height:1.6;opacity:.7}
+.hidden{display:none}
+.admin-table{width:100%;overflow-x:auto;font-size:.8em}
+.admin-table table{min-width:700px}
+.admin-table th{background:var(--navy-mid);position:sticky;top:0}
+.admin-table td{font-size:.8em}
+.admin-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
+.badge{background:var(--gold);color:var(--navy);padding:2px 8px;border-radius:4px;font-size:.75em;font-weight:700}
+</style>
+</head>
+<body>
+<div class="container">
+<header>
+<h1>AI Quant Desk<span>— パーソナル資産分析 —</span></h1>
+</header>
+
+<!-- FORM -->
+<div id="formView" class="form-section">
+<form id="analysisForm">
+<div class="form-group">
+<label>お名前</label>
+<input type="text" id="name" required placeholder="山田 太郎">
+</div>
+<div class="form-group">
+<label>電話番号</label>
+<input type="tel" id="phone" required placeholder="090-1234-5678">
+</div>
+<div class="form-group">
+<label>年収</label>
+<select id="income" required>
+<option value="">選択してください</option>
+<option value="300">500万円未満</option>
+<option value="750">500〜1,000万円</option>
+<option value="1500">1,000〜2,000万円</option>
+<option value="3500">2,000〜5,000万円</option>
+<option value="7500">5,000万円以上</option>
+</select>
+</div>
+<div class="form-group">
+<label>金融資産（現金・預金）</label>
+<div style="position:relative">
+<input type="number" id="assets" required placeholder="1500" min="0" style="padding-right:40px">
+<span style="position:absolute;right:14px;top:50%;transform:translateY(-50%);color:var(--text-dim);font-size:.9em">万円</span>
+</div>
+</div>
+<div class="form-group">
+<label>興味のある投資先（複数選択可）</label>
+<div class="checkbox-group">
+<label><input type="checkbox" value="btc" name="interests"> ビットコイン</label>
+<label><input type="checkbox" value="gold" name="interests"> ゴールド</label>
+<label><input type="checkbox" value="sp500" name="interests"> S&P500</label>
+<label><input type="checkbox" value="realestate" name="interests"> 不動産</label>
+</div>
+</div>
+<button type="submit" class="btn">📊 無料レポートを作成</button>
+</form>
+</div>
+
+<!-- REPORT -->
+<div id="reportView" class="hidden">
+<div class="report" id="reportContent"></div>
+<button class="btn btn-secondary" onclick="backToForm()">← もう一度分析する</button>
+<p class="disclaimer">※ 本レポートは過去の実績に基づく参考情報であり、将来のリターンを保証するものではありません。<br>AI Quant Desk — Powered by Advanced Analytics</p>
+</div>
+
+<!-- ADMIN -->
+<div id="adminView" class="hidden">
+<div class="admin-header">
+<h2 style="color:var(--gold)">📋 管理画面</h2>
+<div><span class="badge" id="totalCount">0件</span>
+<button class="btn" style="width:auto;padding:8px 16px;font-size:.8em;margin-left:10px" onclick="exportCSV()">CSV出力</button></div>
+</div>
+<div class="admin-table"><table id="adminTable"><thead><tr><th>名前</th><th>電話番号</th><th>年収</th><th>資産額</th><th>興味</th><th>入力日時</th><th>閲覧数</th></tr></thead><tbody></tbody></table></div>
+</div>
+</div>
+
+<script>
+const RETURNS={btc:{name:'ビットコイン',ret:2.48,cls:'btc',con:-.21,std:.22,bull:.73},gold:{name:'ゴールド',ret:1.79,cls:'gold',con:-.07,std:.12,bull:.26},sp500:{name:'S&P500',ret:.76,cls:'sp',con:-.09,std:.11,bull:.21},realestate:{name:'不動産',ret:.32,cls:'gold',con:-.05,std:.08,bull:.15}};
+const INFLATION=.025;
+const incomeLabels={'300':'500万円未満','750':'500〜1,000万円','1500':'1,000〜2,000万円','3500':'2,000〜5,000万円','7500':'5,000万円以上'};
+const interestLabels={btc:'ビットコイン',gold:'ゴールド',sp500:'S&P500',realestate:'不動産'};
+
+// Check admin
+if(location.search.includes('admin=true')){
+document.getElementById('formView').classList.add('hidden');
+document.getElementById('adminView').classList.remove('hidden');
+renderAdmin();
+}
+
+document.getElementById('analysisForm').addEventListener('submit',function(e){
+e.preventDefault();
+const data={
+name:document.getElementById('name').value,
+phone:document.getElementById('phone').value,
+income:document.getElementById('income').value,
+assets:parseFloat(document.getElementById('assets').value),
+interests:[...document.querySelectorAll('input[name=interests]:checked')].map(c=>c.value),
+timestamp:new Date().toISOString(),
+views:0
+};
+if(data.interests.length===0){alert('投資先を1つ以上選択してください');return}
+saveSubmission(data);
+generateReport(data);
+});
+
+function saveSubmission(data){
+let subs=JSON.parse(localStorage.getItem('qd_submissions')||'[]');
+data.id=Date.now();
+subs.push(data);
+localStorage.setItem('qd_submissions',JSON.stringify(subs));
+localStorage.setItem('qd_current',JSON.stringify(data));
+}
+
+function incrementView(id){
+let subs=JSON.parse(localStorage.getItem('qd_submissions')||'[]');
+let s=subs.find(x=>x.id===id);
+if(s){s.views=(s.views||0)+1;localStorage.setItem('qd_submissions',JSON.stringify(subs))}
+}
+
+function generateReport(data){
+const a=data.assets;
+const n=data.interests.length;
+const perAsset=a/n;
+let totalInvested=0;
+let bars='';
+let scenarioRows='';
+data.interests.forEach(key=>{
+const r=RETURNS[key];
+const gained=perAsset*(1+r.ret);
+totalInvested+=gained;
+const pct=Math.round(r.ret*100);
+const barW=Math.min(95,30+pct/4);
+bars+=`<div class="bar-container">
+<div class="bar-label"><span class="name">${r.name}（¥${perAsset.toLocaleString()}万）</span><span class="value">¥${Math.round(gained).toLocaleString()}万 (+${pct}%)</span></div>
+<div class="bar"><div class="bar-fill ${r.cls}" style="width:${barW}%">+¥${Math.round(gained-perAsset).toLocaleString()}万</div></div></div>`;
+const cur=perAsset;
+scenarioRows+=`<tr><td>${r.name}</td><td>¥${cur.toLocaleString()}万</td>
+<td class="tag-red">¥${Math.round(cur*(1+r.con)).toLocaleString()}万</td>
+<td class="tag-green">¥${Math.round(cur*(1+r.std)).toLocaleString()}万</td>
+<td class="tag-green">¥${Math.round(cur*(1+r.bull)).toLocaleString()}万</td></tr>`;
+});
+const cashAfter3y=Math.round(a*Math.pow(1-INFLATION,3));
+const cashLoss=a-cashAfter3y;
+const opportunity=Math.round(totalInvested-a);
+const cashBarW=Math.max(5,100-Math.round(INFLATION*300));
+
+const futureTotal=data.interests.reduce((sum,key)=>{const r=RETURNS[key];return sum+perAsset*(1+r.std)},0);
+const futureCash=Math.round(a*(1-INFLATION));
+const futureDiff=Math.round(futureTotal-futureCash);
+
+const html=`
+<div class="report-section"><h3>📈 もし3年前に投資していたら</h3>
+<p style="font-size:.85em;color:var(--text-dim);margin-bottom:16px">お客様の<strong style="color:var(--gold)">¥${a.toLocaleString()}万</strong>を3年前に分散投資していた場合</p>
+${bars}
+<div class="bar-container" style="margin-top:20px">
+<div class="bar-label"><span class="name">💴 現金のまま保有</span><span class="value">¥${a.toLocaleString()}万 (±0%)</span></div>
+<div class="bar"><div class="bar-fill cash" style="width:30%">変化なし</div></div></div>
+<div class="summary-box">
+<div style="display:flex;justify-content:center;gap:30px;flex-wrap:wrap">
+<div><div class="big-number" style="color:var(--green)">¥${Math.round(totalInvested).toLocaleString()}万</div><div class="label">分散投資の場合</div></div>
+<div><div class="big-number" style="color:var(--text-dim)">¥${a.toLocaleString()}万</div><div class="label">現金のまま</div></div>
+</div>
+<div style="margin-top:12px;font-size:1.3em;font-weight:700;color:var(--gold)">機会損失: ▲¥${opportunity.toLocaleString()}万</div>
+</div></div>
+
+<div class="report-section"><h3>💸 現金の「見えない目減り」</h3>
+<p style="font-size:.85em;color:var(--text-dim);margin-bottom:16px">インフレ率 年2.5%で計算</p>
+<div class="bar-container"><div class="bar-label"><span class="name">2023年</span><span class="value">¥${a.toLocaleString()}万（額面通り）</span></div>
+<div class="bar"><div class="bar-fill gold" style="width:95%"></div></div></div>
+<div class="bar-container"><div class="bar-label"><span class="name">2024年</span><span class="value">¥${Math.round(a*(1-INFLATION)).toLocaleString()}万</span></div>
+<div class="bar"><div class="bar-fill loss" style="width:${95-INFLATION*100}%"></div></div></div>
+<div class="bar-container"><div class="bar-label"><span class="name">2025年</span><span class="value">¥${Math.round(a*Math.pow(1-INFLATION,2)).toLocaleString()}万</span></div>
+<div class="bar"><div class="bar-fill loss" style="width:${95-INFLATION*200}%"></div></div></div>
+<div class="bar-container"><div class="bar-label"><span class="name">2026年</span><span class="value">¥${cashAfter3y.toLocaleString()}万</span></div>
+<div class="bar"><div class="bar-fill loss" style="width:${95-INFLATION*300}%"></div></div></div>
+<p style="text-align:center;margin-top:16px;color:var(--red);font-size:.95em">3年間で実質 <strong>▲¥${cashLoss.toLocaleString()}万</strong> の購買力低下</p>
+</div>
+
+<div class="report-section"><h3>🔮 今後12ヶ月の見通し</h3>
+<table><thead><tr><th>資産</th><th>現在（投資額）</th><th>控えめ</th><th>標準</th><th>強気</th></tr></thead>
+<tbody>${scenarioRows}</tbody></table>
+<div class="comparison-grid" style="margin-top:20px">
+<div class="comp-card positive"><div class="desc">分散投資（標準予測）</div><div class="amount">¥${Math.round(futureTotal).toLocaleString()}万</div><div class="desc">1年後</div></div>
+<div class="comp-card negative"><div class="desc">現金のまま（実質価値）</div><div class="amount">¥${futureCash.toLocaleString()}万</div><div class="desc">1年後</div></div>
+</div>
+<p style="text-align:center;margin-top:12px;color:var(--gold);font-weight:600">1年間の差額: ¥${futureDiff.toLocaleString()}万</p>
+</div>
+
+<div class="report-section"><h3>📋 まとめ</h3>
+<table><thead><tr><th></th><th>現金保有</th><th>分散投資</th></tr></thead>
+<tbody>
+<tr><td>3年間の実績</td><td class="tag-red">実質¥${cashAfter3y.toLocaleString()}万に目減り</td><td class="tag-green">¥${Math.round(totalInvested).toLocaleString()}万に成長</td></tr>
+<tr><td>1年後の予測</td><td class="tag-red">実質¥${futureCash.toLocaleString()}万に目減り</td><td class="tag-green">¥${Math.round(futureTotal).toLocaleString()}万に成長</td></tr>
+</tbody></table>
+<div class="summary-box" style="margin-top:20px;border-color:var(--red)">
+<p style="font-size:.95em;line-height:1.8">現金は「安全」に見えて、<strong style="color:var(--red)">毎年確実に価値が下がっています。</strong><br>資産の一部を分散投資に回すことで、インフレから資産を守りながら<br>成長の機会を得ることができます。</p>
+</div></div>`;
+
+document.getElementById('reportContent').innerHTML=html;
+document.getElementById('formView').classList.add('hidden');
+document.getElementById('reportView').classList.remove('hidden');
+window.scrollTo({top:0,behavior:'smooth'});
+const cur=JSON.parse(localStorage.getItem('qd_current'));
+if(cur)incrementView(cur.id);
+}
+
+function backToForm(){
+document.getElementById('reportView').classList.add('hidden');
+document.getElementById('formView').classList.remove('hidden');
+document.getElementById('analysisForm').reset();
+window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function renderAdmin(){
+const subs=JSON.parse(localStorage.getItem('qd_submissions')||'[]');
+document.getElementById('totalCount').textContent=subs.length+'件';
+const tbody=document.querySelector('#adminTable tbody');
+tbody.innerHTML='';
+subs.reverse().forEach(s=>{
+const d=new Date(s.timestamp);
+const dt=`${d.getFullYear()}/${(d.getMonth()+1).toString().padStart(2,'0')}/${d.getDate().toString().padStart(2,'0')} ${d.getHours().toString().padStart(2,'0')}:${d.getMinutes().toString().padStart(2,'0')}`;
+const ints=(s.interests||[]).map(i=>interestLabels[i]||i).join(', ');
+tbody.innerHTML+=`<tr><td>${s.name}</td><td>${s.phone}</td><td>${incomeLabels[s.income]||s.income}</td><td>¥${(s.assets||0).toLocaleString()}万</td><td>${ints}</td><td>${dt}</td><td>${s.views||0}</td></tr>`;
+});
+}
+
+function exportCSV(){
+const subs=JSON.parse(localStorage.getItem('qd_submissions')||'[]');
+let csv='名前,電話番号,年収,資産額(万円),興味,入力日時,閲覧数\n';
+subs.forEach(s=>{
+const ints=(s.interests||[]).map(i=>interestLabels[i]||i).join('/');
+csv+=`"${s.name}","${s.phone}","${incomeLabels[s.income]||s.income}",${s.assets},"${ints}","${s.timestamp}",${s.views||0}\n`;
+});
+const blob=new Blob(['\ufeff'+csv],{type:'text/csv;charset=utf-8'});
+const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='quant-desk-submissions.csv';a.click();
+}
+</script>
+</body>
+</html>

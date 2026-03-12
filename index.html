@@ -6,53 +6,63 @@
 <title>AI Quant Desk — 資産分析レポート</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-:root{--navy:#0a1628;--navy-light:#132240;--navy-mid:#1a2d4a;--gold:#d4a843;--gold-light:#e8c875;--text:#e0e6f0;--text-dim:#8899b3;--green:#4ade80;--red:#f87171;--blue:#60a5fa}
-body{font-family:'Helvetica Neue',Arial,'Hiragino Kaku Gothic ProN',sans-serif;background:var(--navy);color:var(--text);min-height:100vh}
+:root{--navy:#0f1f3d;--navy-light:#1a2f55;--navy-mid:#24406a;--navy-surface:#2a4a78;--gold:#d4a843;--gold-light:#e8c875;--gold-dim:#b8923a;--text:#e8ecf4;--text-dim:#9ab0cf;--green:#5eead4;--red:#fca5a5;--blue:#7dd3fc;--border:#2e5080}
+body{font-family:'Helvetica Neue',Arial,'Hiragino Kaku Gothic ProN',sans-serif;background:linear-gradient(160deg,var(--navy) 0%,#0c1a30 100%);color:var(--text);min-height:100vh}
 .container{max-width:720px;margin:0 auto;padding:20px}
-header{text-align:center;padding:30px 0 20px;border-bottom:1px solid var(--navy-mid)}
+header{text-align:center;padding:30px 0 20px;border-bottom:1px solid var(--border)}
 header h1{font-size:1.6em;letter-spacing:2px;color:var(--gold)}
 header h1 span{color:var(--text-dim);font-weight:300;font-size:.6em;display:block;margin-top:4px;letter-spacing:1px}
 .form-section{margin-top:30px}
 .form-group{margin-bottom:20px}
 .form-group label{display:block;margin-bottom:6px;font-size:.9em;color:var(--gold-light)}
-.form-group input,.form-group select{width:100%;padding:12px 14px;background:var(--navy-light);border:1px solid var(--navy-mid);border-radius:8px;color:var(--text);font-size:1em;transition:border .2s}
+.form-group input,.form-group select{width:100%;padding:12px 14px;background:var(--navy-light);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:1em;transition:border .2s}
 .form-group input:focus,.form-group select:focus{outline:none;border-color:var(--gold)}
-.checkbox-group{display:flex;flex-wrap:wrap;gap:10px}
-.checkbox-group label{display:flex;align-items:center;gap:6px;background:var(--navy-light);padding:10px 16px;border-radius:8px;cursor:pointer;border:1px solid var(--navy-mid);transition:all .2s;font-size:.9em}
-.checkbox-group label:has(input:checked){border-color:var(--gold);background:var(--navy-mid)}
-.checkbox-group input[type=checkbox]{accent-color:var(--gold);width:16px;height:16px}
-.btn{width:100%;padding:14px;background:linear-gradient(135deg,var(--gold),#b8912e);color:var(--navy);font-size:1.1em;font-weight:700;border:none;border-radius:10px;cursor:pointer;transition:transform .15s,box-shadow .15s;letter-spacing:1px}
-.btn:hover{transform:translateY(-1px);box-shadow:0 4px 20px rgba(212,168,67,.3)}
+.form-group input.invalid{border-color:var(--red)}
+.form-group .error-msg{color:var(--red);font-size:.75em;margin-top:4px;display:none}
+.form-group input.invalid + .error-msg{display:block}
+
+/* Toggle pills for interests */
+.pill-group{display:flex;flex-wrap:wrap;gap:8px}
+.pill-group label{display:flex;align-items:center;gap:6px;background:var(--navy-light);padding:10px 18px;border-radius:24px;cursor:pointer;border:1.5px solid var(--border);transition:all .25s;font-size:.88em;user-select:none}
+.pill-group label:hover{border-color:var(--navy-surface);background:var(--navy-mid)}
+.pill-group label:has(input:checked){border-color:var(--gold);background:rgba(212,168,67,.12);color:var(--gold-light)}
+.pill-group label:has(input:checked)::before{content:'✓';font-size:.7em;margin-right:2px}
+.pill-group input[type=checkbox]{display:none}
+
+.btn{width:100%;padding:14px;background:linear-gradient(135deg,var(--gold),var(--gold-dim));color:var(--navy);font-size:1.1em;font-weight:700;border:none;border-radius:10px;cursor:pointer;transition:transform .15s,box-shadow .15s;letter-spacing:1px}
+.btn:hover{transform:translateY(-1px);box-shadow:0 4px 24px rgba(212,168,67,.25)}
 .btn:active{transform:translateY(0)}
-.btn-secondary{background:var(--navy-light);color:var(--gold);border:1px solid var(--gold);margin-top:20px}
+.btn-secondary{background:var(--navy-light);color:var(--gold);border:1.5px solid var(--gold);margin-top:20px}
+.btn-secondary:hover{background:var(--navy-mid)}
 .report{margin-top:20px;animation:fadeIn .6s ease}
 @keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
-.report-section{background:var(--navy-light);border-radius:12px;padding:24px;margin-bottom:20px;border:1px solid var(--navy-mid)}
+.report-section{background:var(--navy-light);border-radius:12px;padding:24px;margin-bottom:20px;border:1px solid var(--border)}
 .report-section h3{color:var(--gold);font-size:1.1em;margin-bottom:16px;display:flex;align-items:center;gap:8px}
 .bar-container{margin-bottom:14px}
 .bar-label{display:flex;justify-content:space-between;font-size:.85em;margin-bottom:4px}
 .bar-label .name{color:var(--text-dim)}
 .bar-label .value{color:var(--gold-light);font-weight:600}
 .bar{height:28px;border-radius:6px;position:relative;overflow:hidden;background:var(--navy-mid)}
-.bar-fill{height:100%;border-radius:6px;transition:width 1s ease;display:flex;align-items:center;padding-left:10px;font-size:.75em;font-weight:600}
-.bar-fill.btc{background:linear-gradient(90deg,#f7931a,#e8a22e)}
+.bar-fill{height:100%;border-radius:6px;transition:width 1s ease;display:flex;align-items:center;padding-left:10px;font-size:.75em;font-weight:600;color:var(--navy)}
+.bar-fill.btc{background:linear-gradient(90deg,#f7931a,#f5b342)}
 .bar-fill.gold{background:linear-gradient(90deg,var(--gold),var(--gold-light))}
-.bar-fill.sp{background:linear-gradient(90deg,var(--blue),#93c5fd)}
-.bar-fill.cash{background:linear-gradient(90deg,#6b7280,#9ca3af)}
-.bar-fill.loss{background:linear-gradient(90deg,var(--red),#fca5a5)}
+.bar-fill.sp{background:linear-gradient(90deg,var(--blue),#bae6fd)}
+.bar-fill.realestate{background:linear-gradient(90deg,var(--green),#a7f3d0)}
+.bar-fill.cash{background:linear-gradient(90deg,#6b7fa8,#8fa0c0)}
+.bar-fill.loss{background:linear-gradient(90deg,#e87070,#fca5a5)}
 .summary-box{background:var(--navy);border:2px solid var(--gold);border-radius:10px;padding:20px;text-align:center;margin-top:16px}
 .summary-box .big-number{font-size:2em;font-weight:700;color:var(--gold)}
 .summary-box .label{color:var(--text-dim);font-size:.85em;margin-top:4px}
 .comparison-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:16px}
 .comp-card{background:var(--navy);border-radius:8px;padding:16px;text-align:center}
-.comp-card.positive{border:1px solid var(--green)}
-.comp-card.negative{border:1px solid var(--red)}
+.comp-card.positive{border:1.5px solid var(--green)}
+.comp-card.negative{border:1.5px solid var(--red)}
 .comp-card .amount{font-size:1.4em;font-weight:700;margin:6px 0}
 .comp-card.positive .amount{color:var(--green)}
 .comp-card.negative .amount{color:var(--red)}
 .comp-card .desc{font-size:.75em;color:var(--text-dim)}
 table{width:100%;border-collapse:collapse;margin-top:12px;font-size:.85em}
-th,td{padding:10px;text-align:center;border-bottom:1px solid var(--navy-mid)}
+th,td{padding:10px;text-align:center;border-bottom:1px solid var(--border)}
 th{color:var(--gold-light);font-weight:600;font-size:.8em;text-transform:uppercase}
 td{color:var(--text)}
 .tag-green{color:var(--green)}
@@ -65,6 +75,7 @@ td{color:var(--text)}
 .admin-table td{font-size:.8em}
 .admin-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
 .badge{background:var(--gold);color:var(--navy);padding:2px 8px;border-radius:4px;font-size:.75em;font-weight:700}
+@media(max-width:480px){.pill-group{gap:6px}.pill-group label{padding:8px 14px;font-size:.82em}.comparison-grid{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
@@ -75,14 +86,15 @@ td{color:var(--text)}
 
 <!-- FORM -->
 <div id="formView" class="form-section">
-<form id="analysisForm">
+<form id="analysisForm" novalidate>
 <div class="form-group">
 <label>お名前</label>
 <input type="text" id="name" required placeholder="山田 太郎">
 </div>
 <div class="form-group">
 <label>電話番号</label>
-<input type="tel" id="phone" required placeholder="090-1234-5678">
+<input type="tel" id="phone" required placeholder="09012345678" maxlength="13" inputmode="tel">
+<div class="error-msg">有効な電話番号を入力してください（10〜11桁）</div>
 </div>
 <div class="form-group">
 <label>年収</label>
@@ -104,11 +116,14 @@ td{color:var(--text)}
 </div>
 <div class="form-group">
 <label>興味のある投資先（複数選択可）</label>
-<div class="checkbox-group">
+<div class="pill-group">
 <label><input type="checkbox" value="btc" name="interests"> ビットコイン</label>
+<label><input type="checkbox" value="eth" name="interests"> イーサリアム</label>
 <label><input type="checkbox" value="gold" name="interests"> ゴールド</label>
 <label><input type="checkbox" value="sp500" name="interests"> S&P500</label>
+<label><input type="checkbox" value="nikkei" name="interests"> 日経225</label>
 <label><input type="checkbox" value="realestate" name="interests"> 不動産</label>
+<label><input type="checkbox" value="bond" name="interests"> 債券</label>
 </div>
 </div>
 <button type="submit" class="btn">📊 無料レポートを作成</button>
@@ -134,12 +149,19 @@ td{color:var(--text)}
 </div>
 
 <script>
-const RETURNS={btc:{name:'ビットコイン',ret:2.48,cls:'btc',con:-.21,std:.22,bull:.73},gold:{name:'ゴールド',ret:1.79,cls:'gold',con:-.07,std:.12,bull:.26},sp500:{name:'S&P500',ret:.76,cls:'sp',con:-.09,std:.11,bull:.21},realestate:{name:'不動産',ret:.32,cls:'gold',con:-.05,std:.08,bull:.15}};
+const RETURNS={btc:{name:'ビットコイン',ret:2.48,cls:'btc',con:-.21,std:.22,bull:.73},eth:{name:'イーサリアム',ret:1.65,cls:'btc',con:-.30,std:.18,bull:.65},gold:{name:'ゴールド',ret:1.79,cls:'gold',con:-.07,std:.12,bull:.26},sp500:{name:'S&P500',ret:.76,cls:'sp',con:-.09,std:.11,bull:.21},nikkei:{name:'日経225',ret:.52,cls:'sp',con:-.12,std:.08,bull:.18},realestate:{name:'不動産',ret:.32,cls:'realestate',con:-.05,std:.08,bull:.15},bond:{name:'債券',ret:.12,cls:'cash',con:-.02,std:.04,bull:.08}};
 const INFLATION=.025;
 const incomeLabels={'300':'500万円未満','750':'500〜1,000万円','1500':'1,000〜2,000万円','3500':'2,000〜5,000万円','7500':'5,000万円以上'};
-const interestLabels={btc:'ビットコイン',gold:'ゴールド',sp500:'S&P500',realestate:'不動産'};
+const interestLabels={btc:'ビットコイン',eth:'イーサリアム',gold:'ゴールド',sp500:'S&P500',nikkei:'日経225',realestate:'不動産',bond:'債券'};
 
-// Check admin
+function validatePhone(val){const d=val.replace(/[^0-9]/g,'');return d.length>=10&&d.length<=11}
+
+const phoneInput=document.getElementById('phone');
+phoneInput.addEventListener('blur',function(){
+if(this.value&&!validatePhone(this.value)){this.classList.add('invalid')}else{this.classList.remove('invalid')}
+});
+phoneInput.addEventListener('input',function(){this.classList.remove('invalid')});
+
 if(location.search.includes('admin=true')){
 document.getElementById('formView').classList.add('hidden');
 document.getElementById('adminView').classList.remove('hidden');
@@ -148,9 +170,11 @@ renderAdmin();
 
 document.getElementById('analysisForm').addEventListener('submit',function(e){
 e.preventDefault();
+const phone=document.getElementById('phone').value;
+if(!validatePhone(phone)){document.getElementById('phone').classList.add('invalid');document.getElementById('phone').focus();return}
 const data={
 name:document.getElementById('name').value,
-phone:document.getElementById('phone').value,
+phone:phone,
 income:document.getElementById('income').value,
 assets:parseFloat(document.getElementById('assets').value),
 interests:[...document.querySelectorAll('input[name=interests]:checked')].map(c=>c.value),
@@ -158,6 +182,7 @@ timestamp:new Date().toISOString(),
 views:0
 };
 if(data.interests.length===0){alert('投資先を1つ以上選択してください');return}
+if(!data.assets||data.assets<=0){alert('資産額を入力してください');return}
 saveSubmission(data);
 generateReport(data);
 });
@@ -193,7 +218,7 @@ bars+=`<div class="bar-container">
 <div class="bar-label"><span class="name">${r.name}（¥${perAsset.toLocaleString()}万）</span><span class="value">¥${Math.round(gained).toLocaleString()}万 (+${pct}%)</span></div>
 <div class="bar"><div class="bar-fill ${r.cls}" style="width:${barW}%">+¥${Math.round(gained-perAsset).toLocaleString()}万</div></div></div>`;
 const cur=perAsset;
-scenarioRows+=`<tr><td>${r.name}</td><td>¥${cur.toLocaleString()}万</td>
+scenarioRows+=`<tr><td style="text-align:left">${r.name}</td><td>¥${cur.toLocaleString()}万</td>
 <td class="tag-red">¥${Math.round(cur*(1+r.con)).toLocaleString()}万</td>
 <td class="tag-green">¥${Math.round(cur*(1+r.std)).toLocaleString()}万</td>
 <td class="tag-green">¥${Math.round(cur*(1+r.bull)).toLocaleString()}万</td></tr>`;
@@ -201,7 +226,6 @@ scenarioRows+=`<tr><td>${r.name}</td><td>¥${cur.toLocaleString()}万</td>
 const cashAfter3y=Math.round(a*Math.pow(1-INFLATION,3));
 const cashLoss=a-cashAfter3y;
 const opportunity=Math.round(totalInvested-a);
-const cashBarW=Math.max(5,100-Math.round(INFLATION*300));
 
 const futureTotal=data.interests.reduce((sum,key)=>{const r=RETURNS[key];return sum+perAsset*(1+r.std)},0);
 const futureCash=Math.round(a*(1-INFLATION));
@@ -236,7 +260,7 @@ ${bars}
 </div>
 
 <div class="report-section"><h3>🔮 今後12ヶ月の見通し</h3>
-<table><thead><tr><th>資産</th><th>現在（投資額）</th><th>控えめ</th><th>標準</th><th>強気</th></tr></thead>
+<table><thead><tr><th style="text-align:left">資産</th><th>投資額</th><th>控えめ</th><th>標準</th><th>強気</th></tr></thead>
 <tbody>${scenarioRows}</tbody></table>
 <div class="comparison-grid" style="margin-top:20px">
 <div class="comp-card positive"><div class="desc">分散投資（標準予測）</div><div class="amount">¥${Math.round(futureTotal).toLocaleString()}万</div><div class="desc">1年後</div></div>
@@ -275,7 +299,7 @@ const subs=JSON.parse(localStorage.getItem('qd_submissions')||'[]');
 document.getElementById('totalCount').textContent=subs.length+'件';
 const tbody=document.querySelector('#adminTable tbody');
 tbody.innerHTML='';
-subs.reverse().forEach(s=>{
+[...subs].reverse().forEach(s=>{
 const d=new Date(s.timestamp);
 const dt=`${d.getFullYear()}/${(d.getMonth()+1).toString().padStart(2,'0')}/${d.getDate().toString().padStart(2,'0')} ${d.getHours().toString().padStart(2,'0')}:${d.getMinutes().toString().padStart(2,'0')}`;
 const ints=(s.interests||[]).map(i=>interestLabels[i]||i).join(', ');
